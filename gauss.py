@@ -2,7 +2,10 @@ import numpy
 from copy import deepcopy
 
 
-def Gauss(A, f, extra=False):
+def Gauss(A, f, extra=False, copy=True):
+    if copy:
+        A = deepcopy(A)
+        f = deepcopy(f)
     nonzero = []
     n = len(A)
     # no backward pass used, see third cycle
@@ -34,7 +37,10 @@ def Gauss(A, f, extra=False):
         return x
 
 
-def Gauss_maxabs(A, f, extra=False):
+def Gauss_maxabs(A, f, extra=False, copy=True):
+    if copy:
+        A = deepcopy(A)
+        f = deepcopy(f)
     maxabs = []
     rows = set()
     n = len(A)
@@ -106,3 +112,16 @@ def inverse_matrix(A):
                 E[i][j] *= 0
     x, inv, ma = Gauss_maxabs(A, E, extra=True)
     return inv
+
+if __name__ == '__main__':
+    for i in range(100):
+        A = numpy.random.randn(100, 100)
+        f = numpy.random.randn(100)
+        x1 = Gauss(A, f)
+        x2 = Gauss_maxabs(A, f)
+        if abs(A @ x1 - f).sum() > 1e-8: 
+             print(abs(A @ x1 - f).sum()) 
+        if abs(A @ x2 - f).sum() > 1e-8: 
+             print(abs(A @ x2 - f).sum()) 
+             print(abs(A @ x - f).sum()) 
+
