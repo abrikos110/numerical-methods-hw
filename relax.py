@@ -1,8 +1,9 @@
-def upper_relaxation(A, f, ome=1, eps=1e-8):
+def upper_relaxation(A, f, ome=1, eps=1e-8, log=False):
     x = f * 0.0
     err = 1e+1000
+    if log:
+        log = [1e+1000]
     while err > eps:
-        print(abs(f - A @ x).max())
         d = x * 0.0
         e = 0
         for i in range(len(d)):
@@ -18,5 +19,10 @@ def upper_relaxation(A, f, ome=1, eps=1e-8):
             s /= A[i][i]
             d[i] = s
         err = e
+        if log:
+            log.append(err)
         x += d * ome
-    return x
+    if log:
+        return x, log
+    else:
+        return x

@@ -113,6 +113,14 @@ def inverse_matrix(A):
     x, inv, ma = Gauss_maxabs(A, E, extra=True)
     return inv
 
+
+def matrix_norm_1(A):
+    return max((sum((A[i][j] for i in range(len(A)))) for j in range(len(A)))))
+
+def matrix_norm_inf(A):
+    return max((sum((A[i][j] for j in range(len(A)))) for i in range(len(A)))))
+
+
 if __name__ == '__main__':
     for i in range(100):
         A = numpy.random.randn(100, 100)
