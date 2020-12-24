@@ -35,18 +35,22 @@ def fourth_order_Runge_Kutta(f, x0, y0, h, n):
 
 
 if __name__ == '__main__':
-    from numpy import exp
+    from numpy import exp, sin, cos
     import numpy
     import matplotlib.pyplot as plt
 
     # таблица 1 - функция 6
-    f1 = lambda x, y: (x - x**2) * y
-    F1 = lambda x: exp(-1/6 * x**2 * (-3+2*x))
-    xy1 = (0, 1)
-    xs, ys = second_order_Runge_Kutta(f1, *xy1, 0.1, 10)
-    print('error for second order method:', F1(1) - ys)
-    xf, yf = fourth_order_Runge_Kutta(f1, *xy1, 0.1, 10)
-    print('error for fourth order method:', F1(1) - yf)
+    for f1, F1, xy1 in [(lambda x, y: (y - y**2) * x, lambda x: 1 / (1 - 2/3*exp(-x**2/2)), (0, 3)),
+            (lambda x, y: 3-y-x, lambda x: 4 - x - 4*exp(-x), (0, 0)),
+            (lambda x, y: (y - y*x), lambda x: 5 * exp(-0.5*x*(-2+x)), (0, 5)),
+            (lambda x, y: sin(x) - y, lambda x: -0.5*cos(x) + 0.5*sin(x) + 21/2*exp(-x), (0, 10)),
+            (lambda x, y: (-y - x**2), lambda x: -x**2 + 2*x - 2 + 12*exp(-x), (0, 10)),
+            (lambda x, y: (x - x**2) * y, lambda x: exp(-1/6 * x**2 * (-3+2*x)), (0, 1))]:
+        xs, ys = second_order_Runge_Kutta(f1, *xy1, 0.1, 10)
+        print('error for second order method:', F1(1) - ys)
+        xf, yf = fourth_order_Runge_Kutta(f1, *xy1, 0.1, 10)
+        print('error for fourth order method:', F1(1) - yf)
+        print()
 
     # таблица 2 - функция 21
     f2 = lambda x, y: numpy.array([2.4*y[1] - y[0], exp(-y[0]) - x + 2.2*y[1]])
