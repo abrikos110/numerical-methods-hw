@@ -37,21 +37,69 @@ def fourth_order_Runge_Kutta(f, x0, y0, h, n):
 if __name__ == '__main__':
     from numpy import exp
     import numpy
+    import matplotlib.pyplot as plt
+
     # таблица 1 - функция 6
     f1 = lambda x, y: (x - x**2) * y
     F1 = lambda x: exp(-1/6 * x**2 * (-3+2*x))
     xy1 = (0, 1)
-    xs, ys = second_order_Runge_Kutta(f1, *xy1, 0.01, 100)
+    xs, ys = second_order_Runge_Kutta(f1, *xy1, 0.1, 10)
     print('error for second order method:', F1(1) - ys)
-    xf, yf = fourth_order_Runge_Kutta(f1, *xy1, 0.01, 100)
+    xf, yf = fourth_order_Runge_Kutta(f1, *xy1, 0.1, 10)
     print('error for fourth order method:', F1(1) - yf)
 
     # таблица 2 - функция 21
     f2 = lambda x, y: numpy.array([2.4*y[1] - y[0], exp(-y[0]) - x + 2.2*y[1]])
     xy2 = (0, numpy.array([1, 0.25]))
-    xs, ys = second_order_Runge_Kutta(f2, *xy2, 0.01, 100)
-    xs2, ys2 = second_order_Runge_Kutta(f2, *xy2, 0.0001, 10000)
-    print('pseudo-error for second order method:', abs(ys2 - ys).max())
-    xf, yf = fourth_order_Runge_Kutta(f2, *xy2, 0.01, 100)
-    xf2, yf2 = fourth_order_Runge_Kutta(f2, *xy2, 0.0001, 10000)
-    print('pseudo-error for fourth order method:', abs(yf2 - yf).max())
+    xs, ys = second_order_Runge_Kutta(f2, *xy2, 0.1, 10)
+    xe, ye = fourth_order_Runge_Kutta(f2, *xy2, 0.0001, 10000)
+    print('pseudo-error for second order method:', abs(ye - ys).max())
+    xf, yf = fourth_order_Runge_Kutta(f2, *xy2, 0.1, 10)
+    print('pseudo-error for fourth order method:', abs(ye - yf).max())
+
+
+    xs, ys = xy1
+    x, y = [xs], [ys]
+    for i in range(10):
+        xs, ys = second_order_Runge_Kutta(f1, xs, ys, 0.1, 1)
+        x.append(xs)
+        y.append(ys)
+    plt.plot(x, y, label='метод второго порядка, $h=0.1$')
+
+    xf, yf = xy1
+    x, y = [xf], [yf]
+    for i in range(10):
+        xf, yf = fourth_order_Runge_Kutta(f1, xf, yf, 0.1, 1)
+        x.append(xf)
+        y.append(yf)
+    plt.plot(x, y, label='метод четвертого порядка, $h=0.1$')
+    plt.plot(numpy.linspace(0, 1, 100), F1(numpy.linspace(0, 1, 100)), label='точное решение')
+    plt.legend()
+    plt.show()
+
+
+    xs, ys = [xy2[0]], [xy2[1]]
+    for i in range(10):
+        xy = second_order_Runge_Kutta(f2, xs[-1], ys[-1], 0.1, 1)
+        xs.append(xy[0])
+        ys.append(xy[1])
+    plt.plot(xs, numpy.array(ys)[:, 0], label='$y_1$, второй порядок, $h=0.1$')
+    plt.plot(xs, numpy.array(ys)[:, 1], label='$y_2$, второй порядок, $h=0.1$')
+
+    xf, yf = [xy2[0]], [xy2[1]]
+    for i in range(10):
+        xy = fourth_order_Runge_Kutta(f2, xf[-1], yf[-1], 0.1, 1)
+        xf.append(xy[0])
+        yf.append(xy[1])
+    plt.plot(xf, numpy.array(yf)[:, 0], label='$y_1$, четвертый порядок, $h=0.1$')
+    plt.plot(xf, numpy.array(yf)[:, 1], label='$y_2$, четвертый порядок, $h=0.1$')
+
+    xe, ye = [xy2[0]], [xy2[1]]
+    for i in range(10**4):
+        xy = fourth_order_Runge_Kutta(f2, xe[-1], ye[-1], 10**-4, 1)
+        xe.append(xy[0])
+        ye.append(xy[1])
+    plt.plot(xe, numpy.array(ye)[:, 0], label='$y_1$, четвертый порядок, $h=10^{-4}$')
+    plt.plot(xe, numpy.array(ye)[:, 1], label='$y_2$, четвертый порядок, $h=10^{-4}$')
+    plt.legend()
+    plt.show()
